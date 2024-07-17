@@ -81,15 +81,15 @@
         const colors = ['Red', 'Green', 'Blue', 'Yellow', 'Cyan', 'Magenta', 'White', 'Black', 'Orange', 'Purple'];
         const hatTextures = Array.from({length: 19}, (_, i) => `Hat${i+1}`);
 
-        let selectedGems = new Set();
         let userUUID = '';
+        let channelListener = -1234567; // Choose a unique channel number
 
         function sendToSL(command, param) {
-            if (window.ag_event_listener) {
-                window.ag_event_listener('message', `${command}|${userUUID}|${param}`);
-            } else {
-                console.log('Not running in Second Life:', command, userUUID, param);
-            }
+            let url = `http://cubicfx.studio/sendToSL.php?uuid=${userUUID}&channel=${channelListener}&message=${command}|${param}`;
+            fetch(url)
+                .then(response => response.text())
+                .then(data => console.log(data))
+                .catch(error => console.error('Error:', error));
         }
 
         function createGemButtons() {
@@ -139,9 +139,9 @@
         }
 
         function authenticate() {
-            const urlParams = new URLSearchParams(window.location.search);
-            userUUID = urlParams.get('user');
-            
+        const urlParams = new URLSearchParams(window.location.search);
+        userUUID = urlParams.get('user');
+        
             if (userUUID) {
                 document.getElementById('auth-section').style.display = 'none';
                 document.getElementById('hud-content').style.display = 'block';
@@ -150,13 +150,8 @@
                 createHatButtons();
             } else {
                 document.getElementById('auth-section').innerHTML = '<p>Authentication failed. Please try again.</p>';
-                //document.getElementById('auth-section').style.display = 'none';
-                //document.getElementById('hud-content').style.display = 'block';
-                //createGemButtons();
-                //createColorButtons();
-                //createHatButtons();
             }
-        }
+        }   
 
         window.onload = authenticate;
     </script>
