@@ -149,7 +149,12 @@
                 createColorButtons();
                 createHatButtons();
             } else {
-                document.getElementById('auth-section').innerHTML = '<p>Authentication failed. Please try again.</p>';
+                //document.getElementById('auth-section').innerHTML = '<p>Authentication failed. Please try again.</p>';
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('hud-content').style.display = 'block';
+                createGemButtons();
+                createColorButtons();
+                createHatButtons();
             }
         }   
 
