@@ -3,7 +3,7 @@ $uuid = $_GET['uuid'];
 $channel = $_GET['channel'];
 $message = $_GET['message'];
 
-$url = "http://simhost-06c9a56af17a2102e.agni.secondlife.io:12046/cap/86efa31f-5b7a-6256-4f57-9711e7e07125";  // Replace with your actual cap URL
+$url = "http://simhost-06c9a56af17a2102e.agni.secondlife.io:12046/cap/ef6c9ad6-ea27-add1-9395-21c8e9fd4e57";  // Replace with your actual cap URL
 $data = array('uuid' => $uuid, 'channel' => $channel, 'message' => $message);
 
 $options = array(
