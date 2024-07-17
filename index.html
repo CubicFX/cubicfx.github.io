@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Texture HUD (Test Mode)</title>
+    <title>Enhanced Texture HUD</title>
     <style>
         body {
             font-family: Arial, sans-serif;
@@ -25,11 +25,18 @@
         }
         .button {
             margin: 5px;
-            padding: 10px;
+            width: 60px;
+            height: 60px;
             border: 1px solid #ccc;
+            border-radius: 50%;
             cursor: pointer;
             background-color: #333;
             color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            overflow: hidden;
         }
         .toggle-button.active {
             background-color: #007bff;
@@ -38,41 +45,36 @@
             width: 40px;
             height: 40px;
         }
-        .hat-button {
-            width: 60px;
-            height: 60px;
-            padding: 0;
-            overflow: hidden;
-        }
         .hat-button img {
             width: 100%;
             height: 100%;
             object-fit: cover;
         }
-        .test-mode-banner {
-            background-color: #ffff00;
-            color: #000;
-            padding: 10px;
-            text-align: center;
-            font-weight: bold;
+        #auth-section {
             margin-bottom: 20px;
+        }
+        #hud-content {
+            display: none;
         }
     </style>
 </head>
 <body>
-    <div class="test-mode-banner">
-        Test Mode: Authentication Bypassed
-    </div>
     <h1>Enhanced Texture HUD</h1>
     
-    <h2>Gem Selection</h2>
-    <div id="gem-buttons" class="button-group"></div>
-    
-    <h2>Color Selection</h2>
-    <div id="color-buttons" class="button-group"></div>
-    
-    <h2>Hat Texture</h2>
-    <div id="hat-buttons" class="button-group"></div>
+    <div id="auth-section">
+        <p>Authenticating...</p>
+    </div>
+
+    <div id="hud-content">
+        <h2>Gem Selection</h2>
+        <div id="gem-buttons" class="button-group"></div>
+        
+        <h2>Color Selection</h2>
+        <div id="color-buttons" class="button-group"></div>
+        
+        <h2>Hat Texture</h2>
+        <div id="hat-buttons" class="button-group"></div>
+    </div>
 
     <script>
         const gems = ['Gem1', 'Gem2', 'Gem3', 'Gem4', 'Gem5', 'Gem6', 'Gem7', 'Gem8'];
@@ -80,12 +82,13 @@
         const hatTextures = Array.from({length: 19}, (_, i) => `Hat${i+1}`);
 
         let selectedGems = new Set();
+        let userUUID = '';
 
         function sendToSL(command, param) {
             if (window.ag_event_listener) {
-                window.ag_event_listener('message', command + '|' + param);
+                window.ag_event_listener('message', `${command}|${userUUID}|${param}`);
             } else {
-                console.log('Not running in Second Life:', command, param);
+                console.log('Not running in Second Life:', command, userUUID, param);
             }
         }
 
@@ -127,7 +130,7 @@
                 const button = document.createElement('button');
                 button.className = 'button hat-button';
                 const img = document.createElement('img');
-                img.src = `hat_images/${hat}.jpg`; // Assuming you have images named like Hat1.jpg, Hat2.jpg, etc.
+                img.src = `hat_images/${hat}.jpg`;
                 img.alt = hat;
                 button.appendChild(img);
                 button.onclick = () => sendToSL('change_hat', hat);
@@ -135,11 +138,27 @@
             });
         }
 
-        window.onload = function() {
-            createGemButtons();
-            createColorButtons();
-            createHatButtons();
-        };
+        function authenticate() {
+            const urlParams = new URLSearchParams(window.location.search);
+            userUUID = urlParams.get('user');
+            
+            if (userUUID) {
+                document.getElementById('auth-section').style.display = 'none';
+                document.getElementById('hud-content').style.display = 'block';
+                createGemButtons();
+                createColorButtons();
+                createHatButtons();
+            } else {
+                document.getElementById('auth-section').innerHTML = '<p>Authentication failed. Please try again.</p>';
+                //document.getElementById('auth-section').style.display = 'none';
+                //document.getElementById('hud-content').style.display = 'block';
+                //createGemButtons();
+                //createColorButtons();
+                //createHatButtons();
+            }
+        }
+
+        window.onload = authenticate;
     </script>
 </body>
 </html>
