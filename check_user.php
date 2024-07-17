@@ -1,15 +1,11 @@
 <?php
+require_once 'session_manager.php';
+
 $uuid = $_GET['uuid'];
 
-// Read the current URLs from the JSON file
-$url_file = 'user_urls.json';
-$urls = [];
-if (file_exists($url_file)) {
-    $json = file_get_contents($url_file);
-    $urls = json_decode($json, true);
-}
+$manager = new SessionManager();
 
-if (isset($urls[$uuid])) {
+if ($manager->userExists($uuid)) {
     echo json_encode(array("status" => "success", "message" => "User authenticated"));
 } else {
     http_response_code(400);

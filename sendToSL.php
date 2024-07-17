@@ -1,24 +1,18 @@
 <?php
+require_once 'session_manager.php';
+
 $uuid = $_GET['uuid'];
 $channel = $_GET['channel'];
 $message = $_GET['message'];
 
-// Read the current URLs from the JSON file
-$url_file = 'user_urls.json';
-$urls = [];
-if (file_exists($url_file)) {
-    $json = file_get_contents($url_file);
-    $urls = json_decode($json, true);
-}
+$manager = new SessionManager();
+$url = $manager->getUrl($uuid);
 
-// Check if the UUID exists in our stored URLs
-if (!isset($urls[$uuid])) {
+if (!$url) {
     http_response_code(400);
     echo json_encode(array("status" => "error", "message" => "No URL found for this UUID"));
     exit;
 }
-
-$url = $urls[$uuid];
 
 $data = array('uuid' => $uuid, 'channel' => $channel, 'message' => $message);
 

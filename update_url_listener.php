@@ -1,17 +1,8 @@
 <?php
+require_once 'session_manager.php';
+
 error_reporting(E_ALL);
 ini_set('display_errors', 1);
-
-function updateUrlFile($owner, $newUrl) {
-    $filename = 'user_urls.json';
-    $data = [];
-    if (file_exists($filename)) {
-        $json = file_get_contents($filename);
-        $data = json_decode($json, true);
-    }
-    $data[$owner] = $newUrl;
-    file_put_contents($filename, json_encode($data));
-}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $rawData = file_get_contents("php://input");
@@ -20,7 +11,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($data['url']) && isset($data['owner'])) {
         $newUrl = $data['url'];
         $owner = $data['owner'];
-        updateUrlFile($owner, $newUrl);
+        
+        $manager = new SessionManager();
+        $manager->saveUrl($owner, $newUrl);
+        
         http_response_code(200);
         echo json_encode(array("status" => "success", "message" => "URL updated successfully for owner: " . $owner));
     } else {
