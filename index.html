@@ -116,17 +116,17 @@
             fetch(url)
                 .then(response => {
                     if (!response.ok) {
-                        throw new Error('Network response was not ok');
+                        return response.json().then(err => { throw err; });
                     }
-                    return response.text();
+                    return response.json();
                 })
                 .then(data => {
                     console.log(data);
-                    showStatus('Command sent successfully!', 'success');
+                    showStatus(data.message, 'success');
                 })
                 .catch(error => {
                     console.error('Error:', error);
-                    showStatus('Failed to send command. Please try again.', 'error');
+                    showStatus(error.message || 'Failed to send command. Please try again.', 'error');
                 });
         }
 
@@ -191,13 +191,24 @@
             userUUID = urlParams.get('user');
             
             if (userUUID) {
-                document.getElementById('auth-section').style.display = 'none';
-                document.getElementById('hud-content').style.display = 'block';
-                createGemButtons();
-                createColorButtons();
-                createHatButtons();
+                fetch(`http://cubicfx.studio/check_user.php?uuid=${userUUID}`)
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.status === 'success') {
+                            document.getElementById('auth-section').style.display = 'none';
+                            document.getElementById('hud-content').style.display = 'block';
+                            createGemButtons();
+                            createColorButtons();
+                            createHatButtons();
+                        } else {
+                            throw new Error(data.message);
+                        }
+                    })
+                    .catch(error => {
+                        document.getElementById('auth-section').innerHTML = `<p>Authentication failed: ${error.message}</p>`;
+                    });
             } else {
-                document.getElementById('auth-section').innerHTML = '<p>Authentication failed. Please try again.</p>';
+                document.getElementById('auth-section').innerHTML = '<p>No user ID provided. Please try again.</p>';
             }
         }   
 

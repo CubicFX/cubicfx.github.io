@@ -3,7 +3,23 @@ $uuid = $_GET['uuid'];
 $channel = $_GET['channel'];
 $message = $_GET['message'];
 
-$url = "http://simhost-06c9a56af17a2102e.agni.secondlife.io:12046/cap/ef6c9ad6-ea27-add1-9395-21c8e9fd4e57";  // Replace with your actual cap URL
+// Read the current URLs from the JSON file
+$url_file = 'user_urls.json';
+$urls = [];
+if (file_exists($url_file)) {
+    $json = file_get_contents($url_file);
+    $urls = json_decode($json, true);
+}
+
+// Check if the UUID exists in our stored URLs
+if (!isset($urls[$uuid])) {
+    http_response_code(400);
+    echo json_encode(array("status" => "error", "message" => "No URL found for this UUID"));
+    exit;
+}
+
+$url = $urls[$uuid];
+
 $data = array('uuid' => $uuid, 'channel' => $channel, 'message' => $message);
 
 $options = array(
@@ -17,5 +33,10 @@ $options = array(
 $context  = stream_context_create($options);
 $result = file_get_contents($url, false, $context);
 
-echo $result;
+if ($result === FALSE) {
+    http_response_code(500);
+    echo json_encode(array("status" => "error", "message" => "Failed to send message to Second Life"));
+} else {
+    echo json_encode(array("status" => "success", "message" => "Message sent to Second Life"));
+}
 ?>
