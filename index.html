@@ -1,218 +1,145 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Enhanced Texture HUD</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: black;
-            color: white;
-            text-align: center;
-        }
-        h1, h2 {
-            color: #fff;
-        }
-        .button-group {
-            display: flex;
-            flex-wrap: wrap;
-            justify-content: center;
-            margin-bottom: 20px;
-        }
-        .button {
-            margin: 5px;
-            width: 60px;
-            height: 60px;
-            border: 1px solid #ccc;
-            border-radius: 50%;
-            cursor: pointer;
-            background-color: #333;
-            color: white;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-            overflow: hidden;
-            transition: all 0.3s ease;
-        }
-        .toggle-button.active {
-            background-color: #007bff;
-            transform: scale(1.1);
-        }
-        .color-button {
-            width: 40px;
-            height: 40px;
-        }
-        .hat-button img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-        }
-        #auth-section {
-            margin-bottom: 20px;
-        }
-        #hud-content {
-            display: none;
-        }
-        #status-message {
-            margin-top: 20px;
-            padding: 10px;
-            border-radius: 5px;
-        }
-        .success {
-            background-color: #28a745;
-        }
-        .error {
-            background-color: #dc3545;
-        }
-        @media (max-width: 600px) {
-            .button {
-                width: 50px;
-                height: 50px;
-                font-size: 10px;
-            }
-            .color-button {
-                width: 30px;
-                height: 30px;
-            }
-        }
-    </style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Coming Soon — Your Site Name</title>
+  <meta name="description" content="A clean, responsive placeholder page you can quickly customize." />
+  <!-- While this is a placeholder, avoid indexing -->
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Open Graph / Twitter (safe placeholders) -->
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="Coming Soon — Your Site Name" />
+  <meta property="og:description" content="Something great is on the way. Stay tuned!" />
+  <meta property="og:url" content="https://example.com" />
+  <meta name="twitter:card" content="summary" />
+
+  <!-- Favicon (inline SVG data URI so there are no extra files) -->
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%230a0a0a'/%3E%3Ctext x='16' y='21' text-anchor='middle' font-family='Arial, Helvetica, sans-serif' font-size='16' fill='%23ffffff'%3E★%3C/text%3E%3C/svg%3E" />
+
+  <style>
+    /* --- Minimal Reset --- */
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { height: 100%; }
+    body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; color: #0b0b0b; background: #f7f7f8; }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; }
+
+    /* --- Theme Tokens --- */
+    :root {
+      --bg: #f7f7f8;
+      --card: #ffffff;
+      --text: #0b0b0b;
+      --muted: #6b7280;
+      --accent: #4f46e5; /* Indigo */
+      --accent-2: #22d3ee; /* Cyan */
+      --radius: 16px;
+      --shadow: 0 10px 30px rgba(0,0,0,0.06);
+    }
+
+    /* --- Layout --- */
+    .page {
+      min-height: 100dvh;
+      display: grid;
+      grid-template-rows: auto 1fr auto;
+    }
+    header, footer { padding: 20px clamp(16px, 4vw, 40px); }
+    main { display: grid; place-items: center; padding: clamp(24px, 5vw, 64px); }
+
+    /* --- Header --- */
+    .brand {
+      display: flex; align-items: center; gap: 12px;
+      font-weight: 700; letter-spacing: 0.2px; font-size: 1rem;
+    }
+    .logo {
+      width: 28px; height: 28px; border-radius: 8px; background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      display: grid; place-items: center; color: #fff; font-size: 18px; box-shadow: var(--shadow);
+    }
+
+    /* --- Card / Hero --- */
+    .card {
+      width: min(900px, 92vw);
+      background: var(--card);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      padding: clamp(24px, 5vw, 56px);
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
+    }
+    .card::after {
+      /* soft gradient corner flare */
+      content: "";
+      position: absolute; inset: -40% -20% auto auto; width: 70%; aspect-ratio: 1/1;
+      background: radial-gradient( circle at 70% 30%, color-mix(in oklab, var(--accent) 60%, white 40%), transparent 60% );
+      opacity: 0.25; filter: blur(40px); z-index: -1;
+    }
+
+    h1 { font-size: clamp(28px, 4.5vw, 44px); margin: 0 0 14px; }
+    p.lead { color: var(--muted); font-size: clamp(16px, 1.8vw, 18px); line-height: 1.6; margin: 0 0 22px; }
+
+    .cta-row { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 6px; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; border-radius: 999px;
+      padding: 12px 18px; font-weight: 600; text-decoration: none; transition: transform .08s ease, background .2s ease, border-color .2s ease;
+    }
+    .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent-2)); color: #fff; }
+    .btn-primary:hover { transform: translateY(-1px); }
+    .btn-ghost { background: transparent; border-color: #e5e7eb; color: var(--text); }
+    .btn-ghost:hover { border-color: #d1d5db; }
+
+    /* --- Footer --- */
+    footer { color: var(--muted); font-size: 14px; display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .links { display: flex; gap: 16px; }
+
+    /* --- Utilities --- */
+    .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+    .tag { display: inline-block; padding: 6px 10px; font-size: 12px; border-radius: 999px; background: #eef2ff; color: #3730a3; font-weight: 700; letter-spacing: .3px; }
+  </style>
 </head>
 <body>
-    <h1>Enhanced Texture HUD</h1>
-    
-    <div id="auth-section">
-        <p>Authenticating...</p>
-    </div>
+  <div class="page">
+    <header>
+      <div class="brand" aria-label="Site brand">
+        <div class="logo" aria-hidden="true">◆</div>
+        <span>Your Site Name</span>
+      </div>
+    </header>
 
-    <div id="hud-content">
-        <h2>Gem Selection</h2>
-        <div id="gem-buttons" class="button-group"></div>
-        
-        <h2>Color Selection</h2>
-        <div id="color-buttons" class="button-group"></div>
-        
-        <h2>Hat Texture</h2>
-        <div id="hat-buttons" class="button-group"></div>
-    </div>
+    <main>
+      <section class="card" aria-labelledby="hero-title">
+        <span class="tag" aria-hidden="true">COMING SOON</span>
+        <h1 id="hero-title">Something great is on the way</h1>
+        <p class="lead">This is a clean, responsive placeholder page. Replace the text, logo, and colors to make it yours. You can link a newsletter, add social profiles, or keep it simple while you build.</p>
+        <div class="cta-row">
+          <a class="btn btn-primary" href="mailto:you@example.com" aria-label="Contact us by email">Contact Us</a>
+          <a class="btn btn-ghost" href="#" aria-label="Learn more (placeholder)">Learn More</a>
+        </div>
+      </section>
+    </main>
 
-    <div id="status-message"></div>
+    <footer>
+      <div>© <span id="year"></span> Your Site Name</div>
+      <nav class="links" aria-label="Footer links">
+        <a href="#">Privacy</a>
+        <a href="#">Terms</a>
+        <a href="mailto:you@example.com">Email</a>
+      </nav>
+    </footer>
+  </div>
 
-    <script>
-        const gems = ['Gem1', 'Gem2', 'Gem3', 'Gem4', 'Gem5', 'Gem6', 'Gem7', 'Gem8'];
-        const colors = ['Red', 'Green', 'Blue', 'Yellow', 'Cyan', 'Magenta', 'White', 'Black', 'Orange', 'Purple'];
-        const hatTextures = Array.from({length: 19}, (_, i) => `Hat${i+1}`);
+  <noscript><div class="sr-only">JavaScript is disabled. The page will still work; the year will not auto-update.</div></noscript>
+  <script>
+    // Update year automatically
+    document.getElementById('year').textContent = new Date().getFullYear();
+  </script>
 
-        let userUUID = '';
-        let channelListener = -1234567; // Choose a unique channel number
-        let selectedGems = new Set();
-
-        function sendToSL(command, param) {
-            let url = `http://cubicfx.studio/sendToSL.php?uuid=${userUUID}&channel=${channelListener}&message=${command}|${param}`;
-            fetch(url)
-                .then(response => {
-                    if (!response.ok) {
-                        return response.json().then(err => { throw err; });
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    console.log(data);
-                    showStatus(data.message, 'success');
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    showStatus(error.message || 'Failed to send command. Please try again.', 'error');
-                });
-        }
-
-        function showStatus(message, type) {
-            const statusElement = document.getElementById('status-message');
-            statusElement.textContent = message;
-            statusElement.className = type;
-            setTimeout(() => {
-                statusElement.textContent = '';
-                statusElement.className = '';
-            }, 3000);
-        }
-
-        function createGemButtons() {
-            const container = document.getElementById('gem-buttons');
-            gems.forEach(gem => {
-                const button = document.createElement('button');
-                button.className = 'button toggle-button';
-                button.textContent = gem;
-                button.onclick = () => {
-                    button.classList.toggle('active');
-                    if (selectedGems.has(gem)) {
-                        selectedGems.delete(gem);
-                    } else {
-                        selectedGems.add(gem);
-                    }
-                };
-                container.appendChild(button);
-            });
-        }
-
-        function createColorButtons() {
-            const container = document.getElementById('color-buttons');
-            colors.forEach(color => {
-                const button = document.createElement('button');
-                button.className = 'button color-button';
-                button.style.backgroundColor = color.toLowerCase();
-                button.onclick = () => {
-                    const gemsString = Array.from(selectedGems).join(',');
-                    sendToSL('change_color', `${color}|${gemsString}`);
-                };
-                container.appendChild(button);
-            });
-        }
-
-        function createHatButtons() {
-            const container = document.getElementById('hat-buttons');
-            hatTextures.forEach(hat => {
-                const button = document.createElement('button');
-                button.className = 'button hat-button';
-                const img = document.createElement('img');
-                img.src = `hat_images/${hat}.jpg`;
-                img.alt = hat;
-                button.appendChild(img);
-                button.onclick = () => sendToSL('change_hat', hat);
-                container.appendChild(button);
-            });
-        }
-
-        function authenticate() {
-            const urlParams = new URLSearchParams(window.location.search);
-            userUUID = urlParams.get('user');
-            
-            if (userUUID) {
-                fetch(`http://cubicfx.studio/check_user.php?uuid=${userUUID}`)
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.status === 'success') {
-                            document.getElementById('auth-section').style.display = 'none';
-                            document.getElementById('hud-content').style.display = 'block';
-                            createGemButtons();
-                            createColorButtons();
-                            createHatButtons();
-                        } else {
-                            throw new Error(data.message);
-                        }
-                    })
-                    .catch(error => {
-                        document.getElementById('auth-section').innerHTML = `<p>Authentication failed: ${error.message}</p>`;
-                    });
-            } else {
-                document.getElementById('auth-section').innerHTML = '<p>No user ID provided. Please try again.</p>';
-            }
-        }   
-
-        window.onload = authenticate;
-    </script>
+  <!-- Quick customization guide:
+    1) Replace "Your Site Name" (header + footer) and the email address.
+    2) Change colors in :root (e.g., --accent / --accent-2).
+    3) Swap the favicon character in the inline SVG (currently a star) or replace the data URI entirely.
+    4) Remove the robots meta tag when you're ready to go live.
+  -->
 </body>
 </html>
